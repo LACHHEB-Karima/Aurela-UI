@@ -1,37 +1,32 @@
+import { useEffect, useState } from 'react';
+import { getMyOrderItems } from '../services/OrderService';
 import MyOrder from '../components/MyOrder';
 import Title from '../components/Title';
 
 const MyOrders = () => {
-  const orders = [
-    {
-      id: 1,
-      image: 'https://example.com/image.jpg',
-      title: 'Men Round Neck Pure Cotton T-shirt',
-      price: 64,
-      quantity: 2,
-      size: 'XL',
-      date: 'Fri May 16 2025',
-      paymentMethod: 'COD',
-    },
-    {
-      id: 2,
-      image: 'https://example.com/image.jpg',
-      title: 'Men Round Neck Pure Cotton T-shirt',
-      price: 64,
-      quantity: 2,
-      size: 'XL',
-      date: 'Fri May 16 2025',
-      paymentMethod: 'COD',
-    },
-  ];
+  const [orderItems, setOrderItems] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getMyOrderItems();
+      if (data && data.content) {
+        setOrderItems(data.content);
+      }
+    }
+    fetchData();
+  }, []);
 
   return (
     <div className="w-full max-w-7xl m-auto border-t border-gray-200 px-4 py-8 mb-8">
-       <Title text="My orders" className="mt-8"/>
+      <Title text="My Orders" className="mt-8" />
       <div className="mt-4">
-        {orders.map(order => (
-          <MyOrder key={order.id} order={order} />
-        ))}
+        {orderItems.length > 0 ? (
+          orderItems.map((item, index) => (
+            <MyOrder key={index} order={item} />
+          ))
+        ) : (
+          <p className="text-gray-600">No orders found.</p>
+        )}
       </div>
     </div>
   );

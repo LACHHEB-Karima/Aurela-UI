@@ -92,7 +92,7 @@ export async function getMyOrders() {
  * @param {number} size 
  * @returns {Promise<Object>}
  */
-export async function getAllOrderItems(page = 0, size = 10) {
+export async function getAllOrderItems(page = 0, size = 20) {
   try {
     const response = await axios.get(`${API_BASE_URL}/all`, {
       params: { page, size },
