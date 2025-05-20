@@ -75,3 +75,13 @@ export async function logout() {
 }
 
 
+export async function getCurrentUser() {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/me`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    return null;
+  }
+}

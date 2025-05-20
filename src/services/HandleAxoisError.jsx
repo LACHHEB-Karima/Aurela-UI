@@ -4,7 +4,7 @@ import axios from 'axios';
  * @param {any} error
  * @param {string} context 
  */
-function handleAxiosError(error, context) {
+export default function handleAxiosError(error, context) {
   if (axios.isAxiosError(error)) {
     const message = error.response?.data?.message || error.response?.data?.error || error.message;
     console.error(`${context}: ${message}`);

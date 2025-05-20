@@ -1,30 +1,38 @@
 import { FaUser, FaSearch, FaShoppingBag, FaBars } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import useCartStore from "../store/useCartStore";
+import { useAuth } from "../context/AuthContext"; 
 
 const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const cartItems = useCartStore(state => state.cartItems);
+  const cartItems = useCartStore((state) => state.cartItems);
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
+  const handleLogout = async () => {
+    await logout();
+    navigate("/");
+  };
 
   const linkClass = ({ isActive }) =>
     `relative pb-1 transition 
-   after:content-[''] after:absolute after:left-1/2 after:translate-x-[-50%] 
-   after:bottom-0 after:h-0.5 after:bg-black 
-   after:transition-all after:duration-300
-   ${isActive ? 'after:w-4' : 'after:w-0 hover:after:w-4'}`;
+     after:content-[''] after:absolute after:left-1/2 after:translate-x-[-50%] 
+     after:bottom-0 after:h-0.5 after:bg-black 
+     after:transition-all after:duration-300
+     ${isActive ? "after:w-4" : "after:w-0 hover:after:w-4"}`;
 
   return (
     <header className="font-sans mx-auto mt-2 w-full max-w-7xl sm:px-8 py-4 flex justify-between items-center relative">
       {/* Logo */}
-      <div className="text-2xl font-bold flex items-center">
+      <Link to="/" className="text-2xl font-bold flex items-center">
         AURELA<span className="text-pink-300 text-3xl">.</span>
-      </div>
+      </Link>
 
       {/* Desktop Nav */}
       <nav className="hidden lg:flex gap-8 items-center text-sm uppercase">
@@ -35,11 +43,45 @@ const NavBar = () => {
       </nav>
 
       {/* Icons */}
-      <div className="flex items-center gap-4 text-lg">
+      <div className="flex items-center gap-4 text-lg relative">
         <button>
           <FaSearch className="cursor-pointer" />
         </button>
-        <Link to="/login"><FaUser className="cursor-pointer" /></Link>
+
+        {/* User Icon and Dropdown */}
+        <div className="relative">
+          {isAuthenticated ? (
+            <>
+              <FaUser
+                className="cursor-pointer"
+                onClick={() => setDropdownOpen((prev) => !prev)}
+              />
+              {dropdownOpen && (
+                <div className="absolute right-0 top-8 mt-1 w-40 bg-gray-100 shadow-lg rounded-md z-50">
+                  <button
+                    onClick={() => {
+                      navigate("/orders");
+                      setDropdownOpen(false);
+                    }}
+                    className="w-full text-left px-4 py-2 text-sm border-b border-gray-300 hover:bg-white"
+                  >
+                    Orders
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-white"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <Link to="/login">
+              <FaUser className="cursor-pointer" />
+            </Link>
+          )}
+        </div>
 
         {/* Shopping Bag with Count */}
         <div className="relative">
@@ -53,6 +95,7 @@ const NavBar = () => {
           </Link>
         </div>
 
+        {/* Mobile Menu Icon */}
         <FaBars onClick={() => setMenuOpen(true)} className="lg:hidden cursor-pointer" />
       </div>
 
@@ -66,9 +109,6 @@ const NavBar = () => {
           <NavLink to="/perfumes" onClick={() => setMenuOpen(false)} className={linkClass}>Perfumes</NavLink>
           <NavLink to="/about" onClick={() => setMenuOpen(false)} className={linkClass}>About</NavLink>
           <NavLink to="/contact" onClick={() => setMenuOpen(false)} className={linkClass}>Contact</NavLink>
-          <NavLink to="/login" onClick={() => setMenuOpen(false)} className={linkClass}>Login</NavLink>
-          <NavLink to="/cart" onClick={() => setMenuOpen(false)} className={linkClass}>Shopping Bag</NavLink>
-          <NavLink to="/search" onClick={() => setMenuOpen(false)} className={linkClass}>Search</NavLink>
         </div>
       )}
     </header>

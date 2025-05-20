@@ -11,6 +11,8 @@ import ProductPage from './pages/ProductPage';
 import Cart from './pages/Cart';
 import Order from './pages/Order';
 import MyOrders from './pages/MyOrders';
+import { AuthProvider } from './context/AuthContext';
+import ActivateAccount from './pages/ActivateAccount';
 
 
 const PlaceholderPage = ({ title }) => (
@@ -22,7 +24,7 @@ const PlaceholderPage = ({ title }) => (
 
 function AppContent() {
   const location = useLocation();
-  const hideNavOnRoutes = ['/login', '/signup'];
+  const hideNavOnRoutes = ['/login', '/signup', '/activate-account'];
 
   const shouldHideNav = hideNavOnRoutes.includes(location.pathname);
 
@@ -40,7 +42,8 @@ function AppContent() {
             <Route path="/perfume/:id" element={<ProductPage />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/order" element={<Order />} />
-            <Route path="/my-orders" element={<MyOrders />} />
+            <Route path="/orders" element={<MyOrders />} />
+            <Route path="/activate-account" element={<ActivateAccount />} />
             <Route path="*" element={<PlaceholderPage title="404 - Not Found" />} />
           </Routes>
         {!shouldHideNav && <Footer />}
@@ -53,7 +56,9 @@ function App() {
 
   return (
     <Router> 
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </Router>
   );
 }
