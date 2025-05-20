@@ -1,30 +1,31 @@
 import Title from "./Title";
+
 const WhyChooseUs = () => {
   const items = [
     {
-      title: "Quality Assurance:",
+      title: "Exquisite Craftsmanship",
       description:
-        "We meticulously select and vet each product to ensure it meets our stringent quality standards.",
+        "Each AURELA fragrance is expertly blended by perfumers who understand the art and science of scent, delivering timeless elegance in every bottle.",
     },
     {
-      title: "Convenience:",
+      title: "Authenticity Guaranteed",
       description:
-        "With our user-friendly interface and hassle-free ordering process, shopping has never been easier.",
+        "We offer only 100% authentic perfumes—no imitations, no compromises. Every product is sourced from trusted partners to ensure you receive the original luxury experience.",
     },
     {
-      title: "Exceptional Customer Service:",
+      title: "Tailored Experience",
       description:
-        "Our team of dedicated professionals is here to assist you the way, ensuring your satisfaction is our top priority.",
+        "From our minimalist, elegant website to our dedicated support team, AURELA is designed to make your fragrance journey smooth, personalized, and unforgettable.",
     },
   ];
 
   return (
     <section className="max-w-7xl mx-auto px-6 py-12">
-        {/* Title component */}
-        <div className="px-6 py-4">
-           <Title text="why choose us" />
-       </div>
-     
+      {/* Title component */}
+      <div className="px-6 py-4">
+        <Title text="why choose us" />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 border border-gray-200 text-left">
         {items.map((item, index) => (
           <div

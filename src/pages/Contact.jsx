@@ -7,12 +7,12 @@ const Contact = () => {
         <div className="flex justify-center mb-12">
            <Title text="contact us" />
       </div>
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="w-full lg:w-1/2">
+      <div className="flex flex-col items-center lg:flex-row gap-8">
+        <div className="w-full px-8 lg:w-1/2">
           <img 
-            src="/api/placeholder/800/600" 
+            src="https://res.cloudinary.com/demk1ru75/image/upload/v1/rooms/h0yvtv0kxwh8pbts259t?_a=DAGAACAVZAA0" 
             alt="Workspace with laptop, coffee, small plant and phone"
-            className="w-full h-auto rounded"
+            className="w-full max-w-[800px] h-auto rounded"
           />
         </div>
 

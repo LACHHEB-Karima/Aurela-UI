@@ -3,7 +3,7 @@ const Subscribe = () => {
     <div className="text-center py-12 bg-white">
       <h2 className="text-2xl font-semibold mb-2">Subscribe now & get 20% off</h2>
       <p className="text-gray-500 mb-6">
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        Join the aurela circle and be the first to discover luxurious scent launches.
       </p>
       <form className="flex justify-center">
         <input

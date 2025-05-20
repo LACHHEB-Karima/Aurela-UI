@@ -28,8 +28,8 @@ const LatestCollectionSection = () => {
         <div className="flex justify-center mb-4">
           <Title text="latest collection" />
         </div>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        <p className="text-gray-600 max-w-2xl text-center mx-auto">
+          Discover Aurela’s latest collection, a perfect blend of timeless elegance and contemporary style.
         </p>
       </div>
 

@@ -1,31 +1,24 @@
-import Title from "./Title"
-
-export default function AboutUs() {
+export default function Mission() {
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
-
+    <div className="max-w-7xl mx-auto px-4 py-4">
       <div className="flex flex-col md:flex-row gap-8 items-center">
-        <div className="w-full md:w-1/2">
+        {/* Image Section */}
+        <div className="w-full px-4 py-4 md:w-1/2">
           <img 
-            src="/api/placeholder/600/500" 
-            alt="Fashion collection display with jeans, sweater, boots and accessories" 
-            className="w-full rounded-lg shadow-md"
+            src="https://res.cloudinary.com/demk1ru75/image/upload/v1/rooms/gs4jumhklofe7hxnnfvc?_a=DAGAACAVZAA0" 
+            alt="Elegant perfume bottles arranged on a marble surface" 
+            className="w-full h-full max-h-[600px] object-cover rounded-lg shadow-md"
           />
         </div>
-        
+
+        {/* Text Section */}
         <div className="w-full md:w-1/2 space-y-6">
           <p className="text-gray-700">
-            Forever was born out of a passion for innovation and a desire to revolutionize the way
-            people shop online. Our journey began with a simple idea: to provide a platform
-            where customers can easily discover, explore, and purchase a wide range of products
-            from the comfort of their homes.
+            AURELA was created from a deep appreciation for elegance, self-expression, and the transformative power of scent. We believe that a signature fragrance should do more than smell good—it should evoke memories, elevate confidence, and make a lasting impression.
           </p>
           
           <p className="text-gray-700">
-            Since our inception, we've worked tirelessly to curate a diverse selection of high-
-            quality products that cater to every taste and preference. From fashion and beauty to
-            electronics and home essentials, we offer an extensive collection sourced from trusted
-            brands and suppliers.
+            From soft florals to rich orientals and timeless musks, our curated collection of premium perfumes is crafted for those who value individuality and sophistication. At AURELA, each bottle is a story waiting to unfold—designed with care, blended with passion, and meant to linger beautifully.
           </p>
           
           <MissionComponent />
@@ -40,9 +33,7 @@ function MissionComponent() {
     <div className="mt-8">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Our Mission</h2>
       <p className="text-gray-700">
-        Our mission at Forever is to empower customers with choice, convenience, and
-        confidence. We're dedicated to providing a seamless shopping experience that
-        exceeds expectations, from browsing and ordering to delivery and beyond.
+        At AURELA, our mission is to inspire confidence and elegance through fragrance. We are dedicated to offering luxurious, high-quality perfumes that help our customers feel bold, beautiful, and unforgettable—every single day.
       </p>
     </div>
   );
