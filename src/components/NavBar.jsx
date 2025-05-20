@@ -1,30 +1,16 @@
 import { FaUser, FaSearch, FaShoppingBag, FaBars } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
-import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { useState } from "react";
+import useCartStore from "../store/useCartStore";
 
-const NavBar = ({ setIsSearchMode }) => {
+const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const cartItems = useCartStore(state => state.cartItems);
 
-  const toggleSearch = () => {
-    const newState = !isSearchOpen;
-    setIsSearchOpen(newState);
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
-    if (newState) {
-      // If opening, navigate to perfumes page
-      if (!location.pathname.includes("/perfumes")) {
-        navigate("/perfumes", {
-          state: {
-            isSearchOpen: true,
-          },
-        });
-      }
-    }
-  };
 
   const linkClass = ({ isActive }) =>
     `relative pb-1 transition 
@@ -50,13 +36,23 @@ const NavBar = ({ setIsSearchMode }) => {
 
       {/* Icons */}
       <div className="flex items-center gap-4 text-lg">
-        <button onClick={toggleSearch}>
+        <button>
           <FaSearch className="cursor-pointer" />
         </button>
         <Link to="/login"><FaUser className="cursor-pointer" /></Link>
+
+        {/* Shopping Bag with Count */}
         <div className="relative">
-          <Link to="/cart"><FaShoppingBag className="cursor-pointer" /></Link>
+          <Link to="/cart">
+            <FaShoppingBag className="cursor-pointer" />
+            {totalItems > 0 && (
+              <span className="absolute -bottom-2 -right-2 bg-pink-400 text-white text-xs font-bold rounded-full px-1.5">
+                {totalItems}
+              </span>
+            )}
+          </Link>
         </div>
+
         <FaBars onClick={() => setMenuOpen(true)} className="lg:hidden cursor-pointer" />
       </div>
 
@@ -67,11 +63,11 @@ const NavBar = ({ setIsSearchMode }) => {
             <IoClose />
           </button>
           <NavLink to="/" onClick={() => setMenuOpen(false)} className={linkClass}>Home</NavLink>
-          <NavLink to="/perfumes" onClick={() => setMenuOpen(false)} className={linkClass}>Perfums</NavLink>
+          <NavLink to="/perfumes" onClick={() => setMenuOpen(false)} className={linkClass}>Perfumes</NavLink>
           <NavLink to="/about" onClick={() => setMenuOpen(false)} className={linkClass}>About</NavLink>
           <NavLink to="/contact" onClick={() => setMenuOpen(false)} className={linkClass}>Contact</NavLink>
           <NavLink to="/login" onClick={() => setMenuOpen(false)} className={linkClass}>Login</NavLink>
-          <NavLink to="/shopping" onClick={() => setMenuOpen(false)} className={linkClass}>Shopping Bag</NavLink>
+          <NavLink to="/cart" onClick={() => setMenuOpen(false)} className={linkClass}>Shopping Bag</NavLink>
           <NavLink to="/search" onClick={() => setMenuOpen(false)} className={linkClass}>Search</NavLink>
         </div>
       )}
