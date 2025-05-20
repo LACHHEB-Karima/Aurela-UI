@@ -12,6 +12,7 @@ import Cart from './pages/Cart';
 import Order from './pages/Order';
 import MyOrders from './pages/MyOrders';
 
+
 const PlaceholderPage = ({ title }) => (
   <div className="py-16 text-center">
     <h1 className="text-3xl font-bold text-gray-900">{title} Page</h1>
@@ -36,7 +37,7 @@ function AppContent() {
             <Route path="/about" element={<About />} />
             <Route path="/perfumes" element={<Perfumes />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/perfume" element={<ProductPage />} />
+            <Route path="/perfume/:id" element={<ProductPage />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/order" element={<Order />} />
             <Route path="/my-orders" element={<MyOrders />} />

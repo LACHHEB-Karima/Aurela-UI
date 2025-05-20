@@ -1,141 +1,275 @@
-import { useState } from "react";
-import { FaChevronDown } from 'react-icons/fa';
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { FaSearch } from "react-icons/fa";
+import {
+  getAllMinimalProducts,
+  getProductsSortedByPriceAsc,
+  getProductsSortedByPriceDesc,
+  getProductsSortedByCreatedAtDesc,
+  searchProducts,
+  getProductsByCategory,
+  getProductsBySubCategory
+} from "../services/ProductService";
 import ProductCard from "../components/ProductCard";
 import Title from "../components/Title";
+import { FaChevronDown } from "react-icons/fa";
 
 export default function Perfumes() {
+
+  const [isSearchMode, setIsSearchMode] = useState(false);
   const [sortBy, setSortBy] = useState("Relavant");
-  const [showFilters, setShowFilters] = useState(false); 
-  
-  // Sample product data
-  const products = [
-    {
-      id: 1,
-      title: "Kid Tapered Slim Fit Trouser",
-      price: "38",
-      image: "/api/placeholder/400/320", 
-      category: "kids"
-    },
-    {
-      id: 2,
-      title: "Men Round Neck Pure Cotton T-shirt",
-      price: "64",
-      image: "/api/placeholder/400/320", 
-      category: "men"
-    },
-    {
-      id: 3,
-      title: "Boy Round Neck Pure Cotton T-shirt",
-      price: "60",
-      image: "/api/placeholder/400/320", 
-      category: "kids"
-    },
-    {
-      id: 4,
-      title: "Women Zip-Front Relaxed Fit Jacket",
-      price: "74",
-      image: "/api/placeholder/400/320", 
-      category: "women"
-    }
+  const [showFilters, setShowFilters] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+
+  const categories = [
+    { id: 2, name: "Man" },
+    { id: 1, name: "Woman" },
+    { id: 3, name: "Unisex" }
   ];
 
+  const subCategories = [
+    { id: 1, name: "Soft", categoryId: "woman" },
+    { id: 2, name: "Fresh", categoryId: "unisex" },
+    { id: 5, name: "Woody", categoryId: "man" },
+    { id: 3, name: "Floral", categoryId: "woman" }
+  ];
+
+  function useQuery() {
+    return new URLSearchParams(useLocation().search);
+  }
+
+  // const query = useQuery();
+  // const isSearchMode = query.get("search") === "on";
+
+  const handleCategoryChange = (id) => {
+    setSelectedCategories(prev =>
+      prev.includes(id) ? prev.filter(catId => catId !== id) : [...prev, id]
+    );
+  };
+
+  const handleSubCategoryChange = (id) => {
+    setSelectedSubCategories(prev =>
+      prev.includes(id) ? prev.filter(subId => subId !== id) : [...prev, id]
+    );
+  };
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      let result = [];
+
+      const hasCategoryFilter = selectedCategories.length > 0;
+      const hasSubCategoryFilter = selectedSubCategories.length > 0;
+
+      if (!hasCategoryFilter && !hasSubCategoryFilter) {
+        switch (sortBy) {
+          case "Low to High":
+            result = await getProductsSortedByPriceAsc();
+            break;
+          case "High to Low":
+            result = await getProductsSortedByPriceDesc();
+            break;
+          case "Newest":
+            result = await getProductsSortedByCreatedAtDesc();
+            break;
+          default:
+            result = await getAllMinimalProducts();
+        }
+        setProducts(result.content || []);
+        return;
+      }
+
+      let filteredByCategory = [];
+      let filteredBySubCategory = [];
+
+      if (hasCategoryFilter) {
+        for (const catId of selectedCategories) {
+          const res = await getProductsByCategory(catId);
+          filteredByCategory.push(...(res.content || []));
+        }
+      }
+
+      if (hasSubCategoryFilter) {
+        for (const subId of selectedSubCategories) {
+          const res = await getProductsBySubCategory(subId);
+          filteredBySubCategory.push(...(res.content || []));
+        }
+      }
+
+      let intersectedProducts;
+
+      if (hasCategoryFilter && hasSubCategoryFilter) {
+        const catIds = new Set(filteredByCategory.map(p => p.id));
+        intersectedProducts = filteredBySubCategory.filter(p => catIds.has(p.id));
+      } else if (hasCategoryFilter) {
+        intersectedProducts = filteredByCategory;
+      } else {
+        intersectedProducts = filteredBySubCategory;
+      }
+
+      setProducts(intersectedProducts);
+    } catch (error) {
+      console.error("Error fetching filtered products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async () => {
+    if (!searchKeyword.trim()) {
+      setIsSearching(false);
+      fetchProducts();
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const result = await searchProducts(searchKeyword);
+      setProducts(result.content || []);
+      setIsSearching(true);
+    } catch (error) {
+      console.error("Search error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isSearchMode || !isSearching) {
+      fetchProducts();
+    }
+  }, [sortBy, selectedCategories, selectedSubCategories]);
+
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 border-t border-gray-200 ">
-       <div className="flex flex-col md:flex-row">
-        {/* Filters section */}
+    <div className="max-w-7xl mx-auto px-4 border-t border-gray-200">
+      {isSearchMode && (
+        <div className="w-full bg-[#f0f0f0] py-4 flex justify-center relative">
+          <div className="relative w-1/2 max-w-md">
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              className="w-full pl-5 pr-10 py-3 text-sm rounded-full bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black transition"
+            />
+            <button
+              onClick={handleSearch}
+              className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
+            >
+              <FaSearch className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setIsSearchMode(false)}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
+            >
+              <FaTimes className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+
+      <div className="flex flex-col mt-8 px-4 md:flex-row">
+        {/* Filters */}
         <div className="w-full md:w-1/4 pr-6">
-          {/* FILTERS title with toggle icon only on small screens */}
           <div
             className="flex items-center justify-between mb-4 md:mb-6 cursor-pointer md:cursor-default"
-            onClick={() => {
-              if (window.innerWidth < 768) {
-                setShowFilters((prev) => !prev);
-              }
-            }}
+            onClick={() => window.innerWidth < 768 && setShowFilters((prev) => !prev)}
           >
             <h2 className="font-sans text-xl">FILTERS</h2>
             <FaChevronDown
-              className={`ml-2 text-gray-600 transition-transform duration-200 md:hidden ${
-                showFilters ? "rotate-180" : ""
-              }`}
+              className={`ml-2 text-gray-600 transition-transform duration-200 md:hidden ${showFilters ? "rotate-180" : ""}`}
             />
           </div>
-          {/* Filters content */}
+
           <div className={`${showFilters ? "block" : "hidden"} md:block`}>
-          
-          {/* Categories filter */}
-          <div className="border border-gray-300 p-4 mb-4">
-            <h5 className="font-bold text-sm mb-3">CATEGORIES</h5>
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <input type="checkbox" id="men" className="mr-2 h-4 w-4" />
-                <label htmlFor="men" className="text-gray-600 text-sm">Men</label>
-              </div>
-              <div className="flex items-center">
-                <input type="checkbox" id="women" className="mr-2 h-4 w-4" />
-                <label htmlFor="women" className="text-gray-600 text-sm">Women</label>
-              </div>
-              <div className="flex items-center">
-                <input type="checkbox" id="kids" className="mr-2 h-4 w-4" />
-                <label htmlFor="kids" className="text-gray-600 text-sm">kids</label>
+            {/* Category Filter */}
+            <div className="border border-gray-300 p-4 mb-4">
+              <h5 className="font-bold text-sm mb-3">CATEGORIES</h5>
+              <div className="space-y-2">
+                {categories.map((cat) => (
+                  <div key={cat.id} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`cat-${cat.id}`}
+                      checked={selectedCategories.includes(cat.id)}
+                      onChange={() => handleCategoryChange(cat.id)}
+                      className="mr-2 h-4 w-4"
+                    />
+                    <label htmlFor={`cat-${cat.id}`} className="text-gray-600 text-sm">
+                      {cat.name}
+                    </label>
+                  </div>
+                ))}
               </div>
             </div>
-          </div>
-          
-          {/* Type filter */}
-          <div className="border border-gray-300 p-4">
-            <h5 className="font-bold text-sm mb-3">TYPE</h5>
-            <div className="space-y-2">
-              <div className="flex items-center">
-                <input type="checkbox" id="topwear" className="mr-2 h-4 w-4" />
-                <label htmlFor="topwear" className="text-gray-600 text-sm">Topwear</label>
-              </div>
-              <div className="flex items-center">
-                <input type="checkbox" id="bottomwear" className="mr-2 h-4 w-4" />
-                <label htmlFor="bottomwear" className="text-gray-600 text-sm">Bottomwear</label>
-              </div>
-              <div className="flex items-center">
-                <input type="checkbox" id="winterwear" className="mr-2 h-4 w-4" />
-                <label htmlFor="winterwear" className="text-gray-600 text-sm">Winterwear</label>
+
+            {/* Subcategory Filter */}
+            <div className="border border-gray-300 p-4">
+              <h5 className="font-bold text-sm mb-3">TYPE</h5>
+              <div className="space-y-2">
+                {subCategories.map((sub) => (
+                  <div key={sub.id} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={`sub-${sub.id}`}
+                      checked={selectedSubCategories.includes(sub.id)}
+                      onChange={() => handleSubCategoryChange(sub.id)}
+                      className="mr-2 h-4 w-4"
+                    />
+                    <label htmlFor={`sub-${sub.id}`} className="text-gray-600 text-sm">
+                      {sub.name}
+                    </label>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
-        </div>
-        {/* Products section */}
+
+        {/* Product Section */}
         <div className="w-full md:w-3/4 mt-6 md:mt-0">
-          {/* Header with title and sort */}
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
             <Title text="all perfumes" />
             <div className="relative">
-              <select 
+              <select
                 className="appearance-none border border-gray-300 px-4 py-2 pr-8 bg-white text-gray-900 text-sm"
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
               >
-                <option>Sort by: Relavant</option>
-                <option>Sort by: Low to High</option>
-                <option>Sort by: High to Low</option>
-                <option>Sort by: Newest</option>
+                <option>Relavant</option>
+                <option>Low to High</option>
+                <option>High to Low</option>
+                <option>Newest</option>
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                 <FaChevronDown size={16} />
               </div>
             </div>
           </div>
-          
-          {/* Product grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map(product => (
-              <ProductCard
-                key={product.id}
-                image={product.image}
-                title={product.title}
-                price={product.price}
-                category={product.category}
-              />
-            ))}
-          </div>
+
+          {loading ? (
+            <p className="text-gray-500">Loading products...</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {products.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  image={product.principalImageUrl}
+                  name={product.name}
+                  price={product.price}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

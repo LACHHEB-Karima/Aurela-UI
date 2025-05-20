@@ -1,13 +1,33 @@
 import { FaUser, FaSearch, FaShoppingBag, FaBars } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-const NavBar = () => {
+const NavBar = ({ setIsSearchMode }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const toggleSearch = () => {
+    const newState = !isSearchOpen;
+    setIsSearchOpen(newState);
+
+    if (newState) {
+      // If opening, navigate to perfumes page
+      if (!location.pathname.includes("/perfumes")) {
+        navigate("/perfumes", {
+          state: {
+            isSearchOpen: true,
+          },
+        });
+      }
+    }
+  };
+
   const linkClass = ({ isActive }) =>
-  `relative pb-1 transition 
+    `relative pb-1 transition 
    after:content-[''] after:absolute after:left-1/2 after:translate-x-[-50%] 
    after:bottom-0 after:h-0.5 after:bg-black 
    after:transition-all after:duration-300
@@ -30,7 +50,9 @@ const NavBar = () => {
 
       {/* Icons */}
       <div className="flex items-center gap-4 text-lg">
-        <Link to="/search"><FaSearch className="cursor-pointer" /></Link>
+        <button onClick={toggleSearch}>
+          <FaSearch className="cursor-pointer" />
+        </button>
         <Link to="/login"><FaUser className="cursor-pointer" /></Link>
         <div className="relative">
           <Link to="/cart"><FaShoppingBag className="cursor-pointer" /></Link>
