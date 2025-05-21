@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { FaSearch } from "react-icons/fa";
+import { useSearchParams } from "react-router-dom";
+import { FaSearch, FaTimes } from "react-icons/fa";
 import {
   getAllMinimalProducts,
   getProductsSortedByPriceAsc,
@@ -15,18 +15,17 @@ import Title from "../components/Title";
 import { FaChevronDown } from "react-icons/fa";
 
 export default function Perfumes() {
-
-  const [isSearchMode, setIsSearchMode] = useState(false);
   const [sortBy, setSortBy] = useState("Relavant");
   const [showFilters, setShowFilters] = useState(false);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
-
   const [searchKeyword, setSearchKeyword] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const isSearchMode = searchParams.get("search") === "true";
 
   const categories = [
     { id: 2, name: "Man" },
@@ -35,18 +34,11 @@ export default function Perfumes() {
   ];
 
   const subCategories = [
-    { id: 1, name: "Soft", categoryId: "woman" },
-    { id: 2, name: "Fresh", categoryId: "unisex" },
-    { id: 5, name: "Woody", categoryId: "man" },
-    { id: 3, name: "Floral", categoryId: "woman" }
+    { id: 1, name: "Soft" },
+    { id: 2, name: "Fresh"},
+    { id: 5, name: "Woody"},
+    { id: 3, name: "Floral"}
   ];
-
-  function useQuery() {
-    return new URLSearchParams(useLocation().search);
-  }
-
-  // const query = useQuery();
-  // const isSearchMode = query.get("search") === "on";
 
   const handleCategoryChange = (id) => {
     setSelectedCategories(prev =>
@@ -141,14 +133,21 @@ export default function Perfumes() {
     }
   };
 
+  const handleCloseSearch = () => {
+    setSearchParams({});
+    setSearchKeyword("");
+    setIsSearching(false);
+  };
+
   useEffect(() => {
     if (!isSearchMode || !isSearching) {
       fetchProducts();
     }
-  }, [sortBy, selectedCategories, selectedSubCategories]);
+  }, [sortBy, selectedCategories, selectedSubCategories, isSearchMode, isSearching]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 border-t border-gray-200">
+
+    <div className="max-w-7xl mx-auto px-4 border-t border-gray-100">
       {isSearchMode && (
         <div className="w-full bg-[#f0f0f0] py-4 flex justify-center relative">
           <div className="relative w-1/2 max-w-md">
@@ -161,20 +160,19 @@ export default function Perfumes() {
             />
             <button
               onClick={handleSearch}
-              className="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
             >
               <FaSearch className="w-4 h-4" />
             </button>
-            <button
-              onClick={() => setIsSearchMode(false)}
+          </div>
+          <button
+              onClick={handleCloseSearch}
               className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-black"
             >
               <FaTimes className="w-4 h-4" />
             </button>
-          </div>
         </div>
       )}
-
 
       <div className="flex flex-col mt-8 px-4 md:flex-row">
         {/* Filters */}

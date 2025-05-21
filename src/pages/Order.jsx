@@ -89,19 +89,45 @@ const Order = () => {
         <div className="mb-6 relative">
           <Title text="PAYMENT METHOD" />
           <div className="flex items-center gap-4 mt-4">
-            <label className="flex items-center gap-2 cursor-pointer border px-4 py-2">
-              <input type="radio" name="payment" disabled checked={paymentMethod === 'stripe'} onChange={() => setPaymentMethod('stripe')} />
-              <span className="text-[#6772e5] font-bold">Stripe</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer border px-4 py-2">
-              <input type="radio" name="payment" disabled checked={paymentMethod === 'razorpay'} onChange={() => setPaymentMethod('razorpay')} />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Razorpay_logo.svg/512px-Razorpay_logo.svg.png" alt="Razorpay" className="h-5" />
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer border px-4 py-2">
-              <input type="radio" name="payment" checked={paymentMethod === 'CASH_ON_DELIVERY'} onChange={() => setPaymentMethod('CASH_ON_DELIVERY')} />
-              <span className="font-semibold text-sm text-gray-500">CACH ON DELIVERY</span>
-            </label>
+            <div className="flex items-center gap-4 mt-4">
+              <label className="flex items-center gap-2 cursor-pointer border px-4 py-1">
+                <input
+                  type="radio"
+                  name="payment"
+                  disabled
+                  checked={paymentMethod === 'stripe'}
+                  onChange={() => setPaymentMethod('stripe')}
+                />
+                <span className="text-[#6772e5] font-bold text-lg">Stripe</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer border px-4 py-1">
+                <input
+                  type="radio"
+                  name="payment"
+                  disabled
+                  checked={paymentMethod === 'paypal'}
+                  onChange={() => setPaymentMethod('paypal')}
+                />
+                <span className="font-bold text-[#003087] text-lg">
+                  Pay<span className="text-[#009cde]">Pal</span>
+                </span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer border px-4 py-2">
+                <input
+                  type="radio"
+                  name="payment"
+                  selected 
+                  checked={paymentMethod === 'CASH_ON_DELIVERY'}
+                  onChange={() => setPaymentMethod('CASH_ON_DELIVERY')}
+                />
+                <span className="font-semibold text-sm text-gray-500">CASH ON DELIVERY</span>
+              </label>
+            </div>
+
           </div>
+
 
           <button
             onClick={handlePlaceOrder}

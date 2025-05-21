@@ -20,6 +20,11 @@ const NavBar = () => {
     navigate("/");
   };
 
+
+  const handleSearchClick = () => {
+    navigate("/perfumes?search=true");
+  };
+
   const linkClass = ({ isActive }) =>
     `relative pb-1 transition 
      after:content-[''] after:absolute after:left-1/2 after:translate-x-[-50%] 
@@ -45,7 +50,7 @@ const NavBar = () => {
       {/* Icons */}
       <div className="flex items-center gap-4 text-lg relative">
         <button>
-          <FaSearch className="cursor-pointer" />
+          <FaSearch onClick={handleSearchClick} className="cursor-pointer" />
         </button>
 
         {/* User Icon and Dropdown */}

@@ -65,9 +65,9 @@ export default function ActivateAccount() {
         <div className="flex flex-col items-center justify-center w-full max-w-md m-auto mt-10">
             <h1 className="text-3xl font-normal text-center text-gray-800 mb-4">Activate Your Account</h1>
             <div className="w-16 h-px bg-gray-600 mb-12"></div>
-            <p className="text-gray-600 mb-6">Enter the 6-digit code sent to your email</p>
+            <p className="text-gray-600 mb-6 mx-auto text-center">Enter the 6-digit code sent to your email <br />If not found check your spam</p>
             <div className="w-full">
-            {error && <div className="mb-4 text-red-600 text-sm">{error}</div>}
+               {error && <div className="mb-4 text-red-500 text-center text-sm">{error}</div>}
 
                 <div className="flex justify-center gap-3 mb-6">
                     {code.map((digit, index) => (
